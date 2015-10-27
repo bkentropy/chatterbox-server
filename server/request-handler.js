@@ -40,7 +40,7 @@ var requestHandler = function(request, response) {
   // You will need to change this if you are sending something
   // other than plain text, like JSON or HTML.
 
-  // TODO We may need to chage this to JSON application/json
+  // TODO We may need to change this to JSON application/json
   headers['Content-Type'] = "text/plain";
 
   // .writeHead() writes to the request line and headers of the response,
@@ -54,6 +54,8 @@ var requestHandler = function(request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
+
+  // keep in mind the response being sent
   response.end("Hello, World!");
 };
 
@@ -67,6 +69,7 @@ var requestHandler = function(request, response) {
 // Another way to get around this restriction is to serve you chat
 // client from this domain by setting up static file serving.
 var defaultCorsHeaders = {
+  // update the allow headers; parse application id, rest api key
   "access-control-allow-origin": "*",
   "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
   "access-control-allow-headers": "content-type, accept",
@@ -74,4 +77,4 @@ var defaultCorsHeaders = {
 };
 
 module.exports.requestHandler = requestHandler; // added by victor
-//module.exports.defaultCorsHeaders = defaultCorsHeaders;
+module.exports.defaultCorsHeaders = defaultCorsHeaders;
