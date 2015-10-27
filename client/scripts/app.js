@@ -1,9 +1,9 @@
 // TODO: find out why success isn't logging, but the test is passing.
 
 var app;
-$(function(){
+$(function () {
 // Helper functions
- var entityMap = {
+  var entityMap = {
     "&": "&amp;",
     "<": "&lt;",
     ">": "&gt;",
@@ -19,26 +19,26 @@ $(function(){
   }
 
   app = {};
-  app.server = 'https://api.parse.com/1/classes/chatterbox';
+  app.server = '127.0.0.1:3000';
   app.username = 'h4x0r bob';
   app.roomname = 'lobby';
   app.friends = {};
 
 
-  app.init = function() {
+  app.init = function () {
     app.$roomSelect = $('#roomSelect');
     app.fetch();
 
     app.$roomSelect.on('change', app.saveRoom);
     $('.submit').on('click', app.handleSubmit);
-    $('#main').on('click', '.username', app.addFriend );
+    $('#main').on('click', '.username', app.addFriend);
 
     // Turn on for auto update
     // setInterval(app.fetch, 3000);
 
   };
 
-  app.send = function(data) {
+  app.send = function (data) {
     $.ajax({
       url: app.server,
       type: 'POST',
@@ -54,12 +54,12 @@ $(function(){
     });
   };
 
-  app.fetch = function(data) {
+  app.fetch = function (data) {
     $.ajax({
       url: app.server,
       type: 'GET',
       // data: JSON.stringify(data),
-      data: {order: '-createdAt'},
+      //data: {order: '-createdAt'},
       success: function (data) {
         // why is this not logging??
         console.log('chatterbox: Message sent. Data: ', data);
@@ -74,74 +74,74 @@ $(function(){
     });
   };
 
-  app.populateMessages = function(data) {
+  app.populateMessages = function (data) {
     app.clearMessages();
-    
-    data.forEach(function(val) {
+
+    data.forEach(function (val) {
       app.addMessage(val)
     })
   };
 
-  app.populateRooms = function(results) {
+  app.populateRooms = function (results) {
     app.$roomSelect.html('<option val="__newRoom">New Room</option><option val="" selected>Lobby</option>')
 
-    if(results) {
+    if (results) {
       var processedRooms = {};
 
-      if ( app.roomname !== 'lobby') {
+      if (app.roomname !== 'lobby') {
         app.addRoom(app.roomname)
         processedRooms[app.roomname] = true;
       }
 
 
-      results.forEach(function(data) {
+      results.forEach(function (data) {
         var roomname = data.roomname;
-        if(roomname && !processedRooms[roomname]) {
+        if (roomname && !processedRooms[roomname]) {
           app.addRoom(roomname);
           processedRooms[roomname] = true;
         }
       })
-    app.$roomSelect.val(app.roomname)
+      app.$roomSelect.val(app.roomname)
     }
   };
 
-  app.clearMessages = function() {
+  app.clearMessages = function () {
     $('#chats').html('');
   };
 
-  app.addMessage = function(message) {
+  app.addMessage = function (message) {
     if (!message.roomname) {
       message.roomname = 'lobby';
     }
 
     // if we want to fix the test, just append the username and message instead of 
     // putting them in the div
-    if ( message.roomname === app.roomname ) {
+    if (message.roomname === app.roomname) {
       var $chat = $('<div class="chat"/><span class="username">' + message.username + '</span class="username">: <br />' +
         escapeHtml(message.text) + '</div>')
-          .attr('data-username', message.username)
-          .attr('data-roomname', message.roomname)
+        .attr('data-username', message.username)
+        .attr('data-roomname', message.roomname)
 
       $('#chats').append($chat);
 
     }
 
-    // $('#chats').append('<div class="chat"><span class="username">' + message.username + '</span class="username">: <br/>' + escapeHtml(message.text) + '</div>')
+    // $('#chats').append('<div class="chat"><span class="username">' + message.username + '</span
+    // class="username">: <br/>' + escapeHtml(message.text) + '</div>')
   };
 
-  app.addRoom = function(newRoom) {
+  app.addRoom = function (newRoom) {
     var $option = $('<option />').val(newRoom).text(newRoom)
 
     app.$roomSelect.append($option)
   };
 
-
-  app.saveRoom = function(event) {
+  app.saveRoom = function (event) {
     var selectedIndex = app.$roomSelect.prop('selectedIndex');
 
-    if ( selectedIndex === 0 ) {
+    if (selectedIndex === 0) {
       var roomName = prompt('What would you like to name the room?');
-      if ( roomName ) {
+      if (roomName) {
         app.roomname = roomName;
         app.addRoom(roomName);
         app.$roomSelect.val(roomName);
@@ -153,25 +153,25 @@ $(function(){
     }
   };
 
-  app.addFriend = function(event) {
-    var username = $(event.currentTarget).attr('data-username'); 
+  app.addFriend = function (event) {
+    var username = $(event.currentTarget).attr('data-username');
 
     // if username !== undefined
     app.friends[username] = true;
     console.log('You are friends with %s', username);
     var selector = '[data-username="' + username.replace(/"g/, '\\\"') + '"]'
-     $(selector).addClass('friend')
+    $(selector).addClass('friend')
   };
 
-  app.handleSubmit = function(event) {
+  app.handleSubmit = function (event) {
     event.preventDefault();
-    console.log("Was submitted.")
+    console.log("Was submitted.");
 
     var message = {
       username: app.username,
       roomname: app.roomname || 'lobby',
       text: $('#message').val()
-    }
+    };
 
     app.send(message)
   };
