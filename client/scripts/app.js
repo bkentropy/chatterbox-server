@@ -19,7 +19,9 @@ $(function () {
   }
 
   app = {};
-  app.server = '127.0.0.1:3000';
+  // app.server = "https://api.parse.com/1/classes/chatterbox"
+  app.server = '127.0.0.1:3000/classes/chatterbox';
+  // app.server = '127.0.0.1:3000/';
   app.username = 'h4x0r bob';
   app.roomname = 'lobby';
   app.friends = {};
@@ -27,7 +29,9 @@ $(function () {
 
   app.init = function () {
     app.$roomSelect = $('#roomSelect');
+    //console.log("fetch calle in init");
     app.fetch();
+    //console.log("fetch called in init");
 
     app.$roomSelect.on('change', app.saveRoom);
     $('.submit').on('click', app.handleSubmit);
@@ -43,7 +47,8 @@ $(function () {
       url: app.server,
       type: 'POST',
       data: JSON.stringify(data),
-      // may need contentType: 'application/json'
+      // may need content type
+      contentType: 'application/json',
       success: function (data) {
         console.log('chatterbox: Message sent. Data: ', data);
         app.fetch();
@@ -55,18 +60,20 @@ $(function () {
   };
 
   app.fetch = function (data) {
+    //console.log("fetch called");
     $.ajax({
       url: app.server,
-      type: 'GET',
+      type: 'GET', // the request method
       // data: JSON.stringify(data),
-      //data: {order: '-createdAt'},
+      // data: {order: '-createdAt'},
+      
       success: function (data) {
         // why is this not logging??
         console.log('chatterbox: Message sent. Data: ', data);
         // populate the rooms
-        app.populateRooms(data.results);
+        //app.populateRooms(data.results);
         // This is working on populating the page
-        app.populateMessages(data.results);
+        //app.populateMessages(data.results);
       },
       error: function (data) {
         console.error('chatterbox: Failed to send message. Error: ', data);

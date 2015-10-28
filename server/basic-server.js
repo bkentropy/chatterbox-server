@@ -26,6 +26,7 @@ var ip = "127.0.0.1";
 var server = http.createServer(requestHandler);
 //var server = http.request(requestHandler);
 console.log("Listening on http://" + ip + ":" + port);
+// This is a repetitive check for
 server.listen(port, ip);
 // server.listen(port, function() {
 //   console.log("the server is running")
